@@ -1,6 +1,6 @@
 class CsvFilter {
     static execute(bills: string): string {
-        return ""
+        return bills
     }
 }
 
