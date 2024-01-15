@@ -1,8 +1,4 @@
-class CsvFilter {
-    static execute(bills: string): string {
-        return bills
-    }
-}
+import {CsvFilter} from "../core/CsvFilter";
 
 describe("CsvFilter", () => {
     it("should produce the same for a file with one correct bill", () => {
