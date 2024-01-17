@@ -21,4 +21,11 @@ describe("CsvFilter", () => {
 
         expect(CsvFilter.execute([header, bill])).toStrictEqual([header])
     })
+
+    it("should remove a bill if all taxes field are empty as one is required", () => {
+        const header: string = "Num_factura, Fecha, Bruto, Neto, IVA, IGIC, Concepto, CIF_cliente, NIF_cliente"
+        const bill: string = "1,02/05/2019,1008,810,,,ACERLaptop,B76430134"
+
+        expect(CsvFilter.execute([header, bill])).toStrictEqual([header])
+    })
 })
