@@ -35,4 +35,10 @@ describe("CsvFilter", () => {
 
         expect(CsvFilter.execute([header, bill])).toStrictEqual([header])
     })
+
+    it("should remove a bill if net amount is not calculated correctly", () => {
+        const bill: string = "1,02/05/2019,1008,810,,17,ACERLaptop,B76430134"
+
+        expect(CsvFilter.execute([header, bill])).toStrictEqual([header])
+    })
 })
