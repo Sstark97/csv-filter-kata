@@ -9,14 +9,22 @@ export class CsvFilter {
         if(isNaN(Number(net)) || isNaN(Number(gross))) {
             return [bills[0]]
         }
-        const tax = iva !== "" ? Number(iva) : Number(igic)
-        const correctNet: number = (1 - (tax / 100)) * Number(gross)
+        const tax = this.extractTax(iva, igic)
+        const correctNet: number = this.calculateNet(tax, gross)
 
 
         if(Number(net) !== correctNet) {
             return [bills[0]]
         }
         return bills
+    }
+
+    private static calculateNet(tax: number, gross: string) {
+        return (1 - (tax / 100)) * Number(gross);
+    }
+
+    private static extractTax(iva: string, igic: string) {
+        return iva !== "" ? Number(iva) : Number(igic);
     }
 
     private static taxFieldsAreExclusive(iva: string, igic: string) {
