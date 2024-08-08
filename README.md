@@ -1,7 +1,8 @@
 # CSV Filter
 The proposal is a small program that filters data from a .csv file (comma-separated values) to return another .csv file.
 
-It deals with a .csv containing invoice information. Each line is part of the data of an invoice, except for the first line, which contains the names of the fields. As you can see in the slide, this would be an example of the file.
+It deals with a .csv containing invoice information. Each line is part of the data of an invoice, except for the first line,
+which contains the names of the fields. As you can see in the slide, this would be an example of the file.
 
 text
 

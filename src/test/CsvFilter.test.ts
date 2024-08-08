@@ -4,7 +4,7 @@ describe("CsvFilter", () => {
     const header: string = "Num_factura, Fecha, Bruto, Neto, IVA, IGIC, Concepto, CIF_cliente, NIF_cliente"
 
     it("should produce the same for a file with one correct bill", () => {
-        const bill: string = "1,02/05/2019,1008,810,19,,ACERLaptop,B76430134,"
+        const bill: string = "1,02/05/2021,1000,790,21,,ACER Laptop,B76430134,"
 
         expect(CsvFilter.execute([header, bill])).toStrictEqual([header, bill])
     })
@@ -37,7 +37,7 @@ describe("CsvFilter", () => {
     })
 
     it("should remove a bill if net amount is not calculated correctly", () => {
-        const bill: string = "1,02/05/2019,1008,810,,17,ACERLaptop,B76430134"
+        const bill: string = "1,02/05/2019,1000,820,,17,ACERLaptop,B76430134"
 
         expect(CsvFilter.execute([header, bill])).toStrictEqual([header])
     })
