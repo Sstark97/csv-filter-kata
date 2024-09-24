@@ -9,7 +9,7 @@ describe("CsvFilter", () => {
         })
 
         it("should remove a invoice if all taxes field are empty as one is required", () => {
-            expect(CsvFilter.execute([header, anInvoiceWithOneLine({})])).toStrictEqual([header])
+            expect(CsvFilter.execute([header, anInvoiceWithOneLine({iva: ""})])).toStrictEqual([header])
         })
 
         it("should remove a invoice if any taxes are non decimal", () => {
@@ -22,7 +22,7 @@ describe("CsvFilter", () => {
     })
 
     it("should produce the same for a file with one correct invoice", () => {
-        const invoice = anInvoiceWithOneLine({iva: "21"})
+        const invoice = anInvoiceWithOneLine({})
         expect(CsvFilter.execute([header, invoice])).toStrictEqual([header, invoice])
     })
 
@@ -46,6 +46,15 @@ describe("CsvFilter", () => {
         expect(CsvFilter.execute([])).toStrictEqual([])
     })
 
+    it('should allows only multiple correct lines', () => {
+        const invoiceLine = anInvoiceWithOneLine({});
+        const invoiceLine2 = anInvoiceWithOneLine({});
+
+        const result = CsvFilter.execute([header, invoiceLine, invoiceLine2]);
+
+        expect(result).toEqual([header, invoiceLine, invoiceLine2]);
+    });
+
     interface FileWithOneInvoiceLineHavingParams {
         iva?: string;
         igic?: string;
@@ -54,7 +63,7 @@ describe("CsvFilter", () => {
     }
 
     const anInvoiceWithOneLine= ({
-                                      iva = "",
+                                      iva = "21",
                                       igic = "",
                                       net = "796.32",
                                       cif = ""
