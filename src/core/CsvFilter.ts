@@ -1,22 +1,28 @@
 export class CsvFilter {
     static execute(bills: string[]): string[] {
+        if(bills.length === 0){
+            return bills;
+        }
         const fields: string[] = bills[1].split(",")
         const [gross, net, iva, igic, cif, nif] = [fields[2], fields[3], fields[4], fields[5], fields[7], fields[8] ?? ""]
-
-        if(this.taxFieldsAreExclusive(iva, igic) || this.bothIdentifiersAreFill(cif, nif)) {
-            return [bills[0]]
-        }
-        if(isNaN(Number(net)) || isNaN(Number(gross))) {
-            return [bills[0]]
-        }
         const tax = this.extractTax(iva, igic)
         const correctNet: number = this.calculateNet(tax, gross)
 
-
-        if(Number(net) !== correctNet) {
+        if(
+            this.taxFieldsAreExclusive(iva, igic) ||
+            this.bothIdentifiersAreFill(cif, nif) ||
+            isNaN(Number(net)) ||
+            isNaN(Number(gross)) ||
+            this.isNetNotCalculateCorrectly(net, correctNet)
+        ) {
             return [bills[0]]
         }
+
         return bills
+    }
+
+    private static isNetNotCalculateCorrectly(net: string, correctNet: number) {
+        return Number(net) !== correctNet;
     }
 
     private static calculateNet(tax: number, gross: string) {
