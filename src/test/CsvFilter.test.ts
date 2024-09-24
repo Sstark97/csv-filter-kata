@@ -14,7 +14,7 @@ describe("CsvFilter", () => {
 
         it("should remove a invoice if any taxes are non decimal", () => {
             const invoiceWithIncorrectIva: string = anInvoiceWithOneLine({iva: "ITAX"})
-            const invoiceWithIncorrectIgic: string = anInvoiceWithOneLine({igic: "ITAX"})
+            const invoiceWithIncorrectIgic: string = anInvoiceWithOneLine({invoiceId: "2", igic: "ITAX"})
 
             expect(CsvFilter.execute([header, invoiceWithIncorrectIva])).toStrictEqual([header])
             expect(CsvFilter.execute([header, invoiceWithIncorrectIgic])).toStrictEqual([header])
@@ -42,20 +42,43 @@ describe("CsvFilter", () => {
         expect(CsvFilter.execute([])).toStrictEqual([])
     })
 
-    it("should give an empty invoice for an empty input", () => {
-        expect(CsvFilter.execute([])).toStrictEqual([])
+    it("should give an error if a list of invoices with only one element", () => {
+        expect(() => CsvFilter.execute([anInvoiceWithOneLine({})])).toThrow();
     })
 
     it('should allows only multiple correct lines', () => {
         const invoiceLine = anInvoiceWithOneLine({});
-        const invoiceLine2 = anInvoiceWithOneLine({});
+        const invoiceLine2 = anInvoiceWithOneLine({invoiceId: "2"});
 
         const result = CsvFilter.execute([header, invoiceLine, invoiceLine2]);
 
         expect(result).toEqual([header, invoiceLine, invoiceLine2]);
-    });
+    })
+
+    it("should drop all invoices with the same id", () => {
+        const invoiceLine = anInvoiceWithOneLine({});
+        const invoiceLine2 = anInvoiceWithOneLine({invoiceId: "2"});
+        const invoiceLine3 = anInvoiceWithOneLine({});
+        const invoiceLine4 = anInvoiceWithOneLine({invoiceId: "3"});
+        const invoiceLine5 = anInvoiceWithOneLine({invoiceId: "4"});
+        const invoiceLine6 = anInvoiceWithOneLine({invoiceId: "2"});
+        const aListOfInvoices = [
+            header,
+            invoiceLine,
+            invoiceLine2,
+            invoiceLine3,
+            invoiceLine4,
+            invoiceLine5,
+            invoiceLine6
+        ];
+
+        const result = CsvFilter.execute(aListOfInvoices);
+
+        expect(result).toEqual([header, invoiceLine4, invoiceLine5]);
+    })
 
     interface FileWithOneInvoiceLineHavingParams {
+        invoiceId?: string
         iva?: string;
         igic?: string;
         net?: string;
@@ -63,12 +86,12 @@ describe("CsvFilter", () => {
     }
 
     const anInvoiceWithOneLine= ({
-                                      iva = "21",
-                                      igic = "",
-                                      net = "796.32",
-                                      cif = ""
-    }: FileWithOneInvoiceLineHavingParams) => {
-        const invoiceId = "1";
+                                     invoiceId = "1",
+                                     iva = "21",
+                                     igic = "",
+                                     net = "796.32",
+                                     cif = ""
+                                 }: FileWithOneInvoiceLineHavingParams) => {
         const invoiceDate = "02/05/2019";
         const gross = "1008";
         const concept = "ACERLaptop";

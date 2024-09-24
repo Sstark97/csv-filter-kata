@@ -1,14 +1,16 @@
 export class CsvFilter {
     static execute(bills: string[]): string[] {
         if(bills.length === 0){
-            return bills;
+            return [];
         }
+        if (bills.length === 1) {
+            throw new Error("Single line it's not allowed")
+        }
+
         const header = bills[0]
         const invoices = bills.slice(1);
 
-        const result = invoices.filter(this.validateInvoice);
-
-        return [header, ...result]
+        return [header].concat(this.filterRepeatedOf(this.takeValidInvoices(invoices)))
     }
 
     private static validateInvoice =  (bill: string) => {
@@ -42,5 +44,19 @@ export class CsvFilter {
     }
     private static haveOnlyOneIdentifier(cif: string, nif: string) {
         return cif !== "" && nif === "" || nif !== "" && cif === "";
+    }
+
+    private static takeValidInvoices = (invoices: string[]) => {
+        return invoices.filter(this.validateInvoice);
+    }
+
+    private static filterRepeatedOf(aListOfInvoices: string[]) {
+        const invoicesIds = aListOfInvoices.map(bill => this.takeInvoiceId(bill));
+        const repeatedInvoices = invoicesIds.filter(((bill, index, self) => self.indexOf(bill) !== index));
+        return aListOfInvoices.filter(bill => !repeatedInvoices.includes(this.takeInvoiceId(bill)));
+    }
+
+    private static takeInvoiceId = (bill: string) => {
+        return bill.split(",").shift();
     }
 }
